@@ -5,6 +5,7 @@ const port = 3000;
 app.use(express.json());
 
 const pessoasroute = require("./api/pessoas");
+const usersRoute = require("./api/usuarios");
     
 // Handling routes request
 app.use("/", pessoasroute.router)
