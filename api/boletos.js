@@ -5,10 +5,13 @@ const router = express.Router();
 const pessoasroute = require("./pessoas");
 
 const listaBoletos = [
-    {id_boleto: 1,
-    id_pessoa: 1,
-    id_user: 1,
-    valor: 100}
+    {   id_boleto: 1,
+        valor: 100,
+        id_user: 1,
+        id_pessoa: 1,
+        status: "pendente",
+        nome_pessoa: pegaNomePessoa(id_boleto)
+    }
 ];
 
 function adicionaBoleto(req){
@@ -17,6 +20,13 @@ function adicionaBoleto(req){
     boleto.id = listaBoletos.length + 1;
     listaBoletos.push(boleto);
     return boleto;
+}
+
+function pegaNomePessoa(id_pessoa){
+    const pessoa = pessoasroute.pegaIdPessoa(id_pessoa);
+    const index = listaPessoas.find(p => p.id == listaBoletos[id_boleto].id_pessoa);
+    const nomePessoa = listaPessoas[index].nome;
+    return nomePessoa;
 }
 
 function pegaIdBoleto(req){
@@ -34,6 +44,7 @@ router.post("/", (req, res) => {
             res.status(400).send("Pessoa não encontrada");
         }
     res.json(adicionaBoleto(req));
+    })
 })
 
 router.delete("/:id", (req,res) =>{
@@ -49,3 +60,10 @@ router.delete("/:id", (req,res) =>{
     }
     )
 })
+
+module.exports = {
+    router,
+    adicionaBoleto,
+    pegaIdBoleto,
+    pegaNomePessoa
+}
