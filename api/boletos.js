@@ -10,8 +10,15 @@ const listaBoletos = [
         id_user: 1,
         id_pessoa: 1,
         status: "pendente",
-        nome_pessoa: pegaNomePessoa(id_boleto)
-    }
+        nome_pessoa: "Gustavo"
+    },
+    {   id_boleto: 2,
+        valor: 200,
+        id_user: 2,
+        id_pessoa: 2,
+        status: "pendente",
+        nome_pessoa: "Leonardo"
+    },
 ];
 
 function adicionaBoleto(req){
@@ -22,18 +29,28 @@ function adicionaBoleto(req){
     return boleto;
 }
 
-function pegaNomePessoa(id_pessoa){
-    const pessoa = pessoasroute.pegaIdPessoa(id_pessoa);
-    const index = listaPessoas.find(p => p.id == listaBoletos[id_boleto].id_pessoa);
-    const nomePessoa = listaPessoas[index].nome;
-    return nomePessoa;
-}
 
 function pegaIdBoleto(req){
-    const id = req.params.id_boleto;
-    const index = listaBoletos.findIndex(p => p.id == id);
+    const id = req.params.id;
+    const index = listaBoletos.findIndex(p => p.id_boleto == id);
     return index;
 }
+
+function buscarBoleto(){
+    return listaBoletos;
+}
+
+router.get("/", (req, res) => {
+    res.json(buscarBoleto());
+})
+
+router.get("/:id", (req, res) => {
+    res.json(listaBoletos[pegaIdBoleto(req)]);
+})
+
+router.get("/:id", (req, res) => {
+    res.json(listaBoletos[pegaIdBoleto(req)]);
+})
 
 router.post("/", (req, res) => {
     pessoasroute.buscarPessoa().then(pessoa => {
@@ -43,14 +60,13 @@ router.post("/", (req, res) => {
         else{
             res.status(400).send("Pessoa não encontrada");
         }
-    res.json(adicionaBoleto(req));
     })
 })
 
 router.delete("/:id", (req,res) =>{
     pessoasroute.buscarPessoa(res.body.id).then(pessoa => {
         if(pessoa.id == listaBoletos.id_pessoa){
-            res.status(404).send("Pessoa adicionada ao boleto");
+            res.status(404).send("Impossível deletar, pessoa adicionada ao boleto!");
         }
         else{
             const boleto = req.body;
@@ -65,5 +81,5 @@ module.exports = {
     router,
     adicionaBoleto,
     pegaIdBoleto,
-    pegaNomePessoa
+    buscarBoleto
 }

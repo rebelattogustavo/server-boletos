@@ -9,7 +9,7 @@ const usersRoute = require("./api/usuarios");
 const boletosRoute = require("./api/boletos");
     
 // Handling routes request
-app.use("/", pessoasroute.router)
+app.use("/pessoa", pessoasroute.router)
 app.use("/user", usersRoute.router)
 app.use("/boleto", boletosRoute.router)
 

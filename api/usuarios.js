@@ -4,6 +4,7 @@ const router = express.Router();
 
 const pessoasroute = require("./pessoas");
 
+
 const listaUsers = [
     {
         id: 1,
@@ -39,16 +40,15 @@ function pegaIdUser(req){
 
 
 router.get("/", (req, res) => {
-    res.send(buscarUser());
+    res.json(buscarUser());
 })
 
 router.get("/:id", (req, res) => {
-    res.json(pegaIdUser(req));
+    res.json(listaUsers[pegaIdUser(req)]);
 })
 
 
 router.post("/", (req, res) => {
-    
     res.json(adicionaUser(req));
 })
 

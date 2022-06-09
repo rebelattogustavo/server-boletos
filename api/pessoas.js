@@ -2,6 +2,9 @@ const express = require("express")
 
 const router = express.Router();
 
+const boletosRoute = require("./boletos");
+
+
 const listaPessoas = [
     {
         id: 1,
@@ -36,16 +39,24 @@ function pegaId(req){
 }
 
 router.get("/", (req, res) => {
-    res.send(buscarPessoa());
+    res.json(buscarPessoa());
 })
 
 router.get("/:id", (req, res) => {
-    res.json(pegaId(req));
+    res.json(listaPessoas[pegaId(req)]);
 })
 
 
 router.post("/", (req, res) => {
-    res.json(adicionaPessoa(req));
+    console.log(req.body.nome)
+    if(req.body.nome != undefined && req.body.cpf != undefined){
+        res.json(adicionaPessoa(req));
+    }
+    else{
+        res.json({
+            erro: "Nome e CPF são obrigatórios"
+        })
+    }
 })
 
 router.put("/:id", (req,res) =>{
@@ -57,13 +68,24 @@ router.put("/:id", (req,res) =>{
 })
 
 router.delete("/:id", (req,res) =>{
-    const pessoa = req.body;
-    listaPessoas.splice(pegaId(req), 1);
-    res.json(pessoa)
+    let numero;
+    const pessoa = req.params.id;
+    boletosRoute.buscarBoleto().forEach(b => {
+        if(b.id_pessoa == pessoa){
+            numero = 0;
+            res.json({
+                erro: "Não é possível excluir uma pessoa que possui boletos"
+                })
+        }else{
+            res.json({
+                erro: "Pessoa excluída com sucesso"
+            });
+        }
+    })
 })
 
 module.exports = {
     router,
     buscarPessoa,
     pegaId,
-};
+}
