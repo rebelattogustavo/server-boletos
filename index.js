@@ -9,8 +9,8 @@ const usersRoute = require("./api/usuarios");
 const boletosRoute = require("./api/boletos");
     
 // Handling routes request
-app.use("/pessoa", pessoasroute.router)
-app.use("/user", usersRoute.router)
-app.use("/boleto", boletosRoute.router)
+app.use("/pessoas", pessoasroute.router)
+app.use("/users", usersRoute.router)
+app.use("/boletos", boletosRoute.router)
 
 app.listen(port, () => console.log(`Servidor rodando local na porta ${port}` ));

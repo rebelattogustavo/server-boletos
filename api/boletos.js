@@ -2,7 +2,8 @@ const express = require("express");
 
 const router = express.Router();
 
-const pessoasroute = require("./pessoas");
+const pessoasRoute = require("./pessoas");
+const userRoute = require("./usuarios");
 
 const listaBoletos = [
     {   id_boleto: 1,
@@ -45,20 +46,22 @@ router.get("/", (req, res) => {
 })
 
 router.get("/:id", (req, res) => {
-    res.json(listaBoletos[pegaIdBoleto(req)]);
+    buscarBoleto().forEach(boleto => {
+        if(boleto.id_boleto == req.params.id){
+            res.json(boleto);
+        }
+    });
 })
 
-router.get("/:id", (req, res) => {
-    res.json(listaBoletos[pegaIdBoleto(req)]);
-})
 
 router.post("/", (req, res) => {
-    pessoasroute.buscarPessoa().then(pessoa => {
+    const listaUsers = userRoute.buscarUser();
+    pessoasRoute.buscarPessoa().then(pessoa => {
         if(pessoa.id == req.body.id_pessoa){
             res.json(adicionaBoleto(req));
         }
         else{
-            res.status(400).send("Pessoa não encontrada");
+            res.status(400).send("Pessoa ou usuário não encontrados!");
         }
     })
 })
@@ -69,7 +72,6 @@ router.delete("/:id", (req,res) =>{
             res.status(404).send("Impossível deletar, pessoa adicionada ao boleto!");
         }
         else{
-            const boleto = req.body;
             listaBoletos.splice(pegaIdBoleto(req), 1);
             res.json(pessoa)
         }

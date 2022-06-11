@@ -2,7 +2,7 @@ const express = require("express")
 
 const router = express.Router();
 
-const pessoasroute = require("./pessoas");
+const boletosRoute = require("./boletoFunc");
 
 
 const listaUsers = [
@@ -27,7 +27,7 @@ function adicionaUser(req){
     console.log(req.body)
     const user = req.body;
     user.id = listaUsers.length + 1;
-    listaUsers.push(pessoa);
+    listaUsers.push(user);
     return user;
 }
 
@@ -49,7 +49,14 @@ router.get("/:id", (req, res) => {
 
 
 router.post("/", (req, res) => {
-    res.json(adicionaUser(req));
+    if(req.body.nome != undefined && req.body.senha != undefined){
+        res.json(adicionaUser(req));
+    }
+    else{
+        res.json({
+            erro: "É necessário preencher nome e senha!"
+        })
+    }
 })
 
 
@@ -62,9 +69,24 @@ router.put("/:id", (req,res) =>{
 })
 
 router.delete("/:id", (req,res) =>{
-    const pessoa = req.body;
-    listaUsers.splice(pegaId(req), 1);
-    res.json(pessoa)
+    let num =0;
+    const user = req.params.id;
+    boletosRoute.buscarBoleto().forEach(b => {
+        if(b.id_user == user){
+            num =0;
+            res.json({
+                erro: "Não é possível excluir um usuário que possui boletos cadastrados!"
+            })
+        }else{
+            num =1;
+        }
+    })
+    if(num == 1){
+        listaUsers.splice(pegaIdUser(req), 1);
+        res.json({
+            mensagem: "Usuário excluído com sucesso!"
+        })
+    }
 })
 
 module.exports = {router, buscarUser, pegaIdUser};

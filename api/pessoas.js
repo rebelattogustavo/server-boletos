@@ -2,7 +2,7 @@ const express = require("express")
 
 const router = express.Router();
 
-const boletosRoute = require("./boletos");
+const boletosRoute = require("./boletoFunc");
 
 
 const listaPessoas = [
@@ -68,11 +68,9 @@ router.put("/:id", (req,res) =>{
 })
 
 router.delete("/:id", (req,res) =>{
-    let numero;
     const pessoa = req.params.id;
     boletosRoute.buscarBoleto().forEach(b => {
         if(b.id_pessoa == pessoa){
-            numero = 0;
             res.json({
                 erro: "Não é possível excluir uma pessoa que possui boletos"
                 })
@@ -84,8 +82,4 @@ router.delete("/:id", (req,res) =>{
     })
 })
 
-module.exports = {
-    router,
-    buscarPessoa,
-    pegaId,
-}
+module.exports = {router, buscarPessoa, pegaId}
