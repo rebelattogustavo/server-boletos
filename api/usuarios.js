@@ -39,12 +39,24 @@ router.get("/:id", (req, res) => {
 
 
 router.post("/", (req, res) => {
-    if(req.body.nome != undefined && req.body.senha != undefined){
-        res.json(adicionaUser(req));
+    let num;
+    if(req.body.nome != undefined){
+        if(req.body.senha != undefined){
+            res.json(adicionaUser(req));
+            num =0;
+        }else{
+            num =1;
+        }
+    }else{
+        num =2;
     }
-    else{
+    if(num == 1){
         res.json({
-            erro: "É necessário preencher nome e senha!"
+            erro: "Senha não fornecida"
+        })
+    }if(num == 2){
+        res.json({
+            erro: "Nome não informado"
         })
     }
 })
@@ -67,11 +79,10 @@ router.delete("/:id", (req,res) =>{
             res.json({
                 erro: "Não é possível excluir um usuário que possui boletos cadastrados!"
             })
-        }else{
             num =1;
         }
     })
-    if(num == 1){
+    if(num != 1){
         usuarios.listaUsers.splice(pegaIdUser(req), 1);
         res.json({
             mensagem: "Usuário excluído com sucesso!"

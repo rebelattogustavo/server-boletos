@@ -36,13 +36,14 @@ router.get("/:id", (req, res) => {
 
 router.post("/", (req, res) => {
     console.log(req.body.nome)
-    if(req.body.nome != undefined && req.body.cpf != undefined){
-        res.json(adicionaPessoa(req));
-    }
-    else{
-        res.json({
-            erro: "Nome e CPF são obrigatórios"
-        })
+    if(req.body.nome != undefined){
+        if(req.body.cpf != undefined){
+            res.json(adicionaPessoa(req));
+        }else{
+            res.json("CPF não informado");
+        }
+    }else{
+        res.json("Nome não informado");
     }
 })
 
@@ -59,14 +60,11 @@ router.delete("/:id", (req,res) =>{
     const pessoa = req.params.id;
     boletos.listaBoletos.forEach(b => {
         if(b.id_pessoa == pessoa){
-            res.json({
-                erro: "Não é possível excluir uma pessoa que possui boletos"
-                })
-        }else{
+            res.status(404).send("Não é possível deletar! Pessoa está adicionada a um boleto.");
             num =1;
         }
     })
-    if(num == 1){
+    if(num != 1){
         pessoas.listaPessoas.splice(pegaIdUser(req), 1);
         res.json({
             mensagem: "Pessoa excluída com sucesso!"

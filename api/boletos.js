@@ -11,7 +11,8 @@ const boletos = require("./listaB");
 function adicionaBoleto(req){
     console.log(req.body)
     const boleto = req.body;
-    boleto.id = boletos.listaBoletos.length + 1;
+    boleto.id_boleto = boletos.listaBoletos.length + 1;
+    boleto.nome_pessoa = pessoas.listaPessoas.filter(p => p.id == boleto.id_pessoa)[0].nome;
     boletos.listaBoletos.push(boleto);
     return boleto;
 }
@@ -19,7 +20,7 @@ function adicionaBoleto(req){
 
 function pegaIdBoleto(req){
     const id = req.params.id;
-    const index = boletos.listaBoletos.findIndex(p => p.id == id);
+    const index = boletos.listaBoletos.findIndex(p => p.id_boleto == id);
     return index;
 }
 
@@ -40,25 +41,44 @@ router.get("/:id", (req, res) => {
 })
 
 router.get("/pessoa/:id", (req, res) => {
-    buscarBoleto().forEach(boleto => {
-        if(boleto.id_pessoa== req.params.id){
-            res.json(boleto);
-        }
-    });
-})
+    const boleto_pessoa = buscarBoleto().filter(boleto => boleto.id_pessoa == req.params.id);
+    res.json(boleto_pessoa);
+});
+
 
 
 router.post("/", (req, res) => {
+    let num;
     const listaUsers = userRoute.buscarUser();
     pessoas.listaPessoas.forEach(pessoa => {
-        if(pessoa.id == req.body.id_pessoa && listaUsers.find(user => user.id == req.body.id_user) 
-        && req.body.valor > 0){
-            res.json(adicionaBoleto(req));
-        }
-        else{
-            res.status(400).send("Pessoa ou usuário não encontrados!");
+        if(pessoa.id == req.body.id_pessoa){
+            if(listaUsers.find(user => user.id == req.body.id_user)){
+                if(req.body.valor > 0){
+                    res.json(adicionaBoleto(req));
+                    num = 0;
+                }else{
+                    num =1
+                }
+            }else{
+                num =2
+            }
+        }else{
+            num =3;
         }
     })
+    if(num == 1){
+        res.json({
+            erro: "Valor inválido!"
+        })
+    }if(num == 2){
+        res.json({
+            erro: "O usuário não existe!"
+        })
+    }if(num == 3){
+        res.json({
+            erro: "A pessoa não existe!"
+        })
+    }
 })
 
 router.put("/:id", (req,res) =>{
@@ -70,16 +90,19 @@ router.put("/:id", (req,res) =>{
 })
 
 router.delete("/:id", (req,res) =>{
+    let num =0;
     pessoas.listaPessoas.forEach(pessoa => {
-        if(pessoa.id == boletos.listaBoletos[pegaIdBoleto(req)].id_pessoa){
+        if(pessoa.id == boletos.listaBoletos.find(boleto => boleto.id_boleto == req.params.id).id_pessoa){
             res.status(404).send("Impossível deletar, pessoa adicionada ao boleto!");
+            num = 1;
         }
-        else{
-            listaBoletos.splice(pegaIdBoleto(req), 1);
-            res.json(pessoa)
-        }
+    })
+    if(num != 1){
+        boletos.listaBoletos.splice(pegaIdBoleto(req), 1);
+        res.json({
+            mensagem: "Boleto excluído com sucesso!"
+        })
     }
-    )
 })
 
 module.exports = {

@@ -10,7 +10,6 @@ const listaPessoas = [
         cpf: "109.163.891-22"
     },
 ];
-
 module.exports = {
     listaPessoas,
 }
