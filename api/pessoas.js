@@ -60,7 +60,7 @@ router.delete("/:id", (req,res) =>{
     const pessoa = req.params.id;
     boletos.listaBoletos.forEach(b => {
         if(b.id_pessoa == pessoa){
-            res.status(404).send("Não é possível deletar! Pessoa está adicionada a um boleto.");
+            res.status(400).send("Não é possível deletar! Pessoa está adicionada a um boleto.");
             num =1;
         }
     })
