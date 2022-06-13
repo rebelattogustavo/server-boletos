@@ -2,39 +2,26 @@ const express = require("express")
 
 const router = express.Router();
 
-const boletosRoute = require("./boletoFunc");
-
-
-const listaPessoas = [
-    {
-        id: 1,
-        nome: "Gusta",
-        cpf: "106.141.649-66"
-    },
-    {
-        id: 2,
-        nome: "Leo",
-        cpf: "109.163.891-22"
-    },
-];
+const boletos = require("./listaB");
+const pessoas = require("./listaP");
 
 
 
 function buscarPessoa(){
-    return listaPessoas;
+    return pessoas.listaPessoas;
 }
 
 function adicionaPessoa(req){
     console.log(req.body)
     const pessoa = req.body;
-    pessoa.id = listaPessoas.length + 1;
-    listaPessoas.push(pessoa);
+    pessoa.id = pesoas.listaPessoas.length + 1;
+    pessoas.listaPessoas.push(pessoa);
     return pessoa;
 }
 
 function pegaId(req){
     const id = req.params.id;
-    const index = listaPessoas.findIndex(p => p.id == id);
+    const index = pessoas.listaPessoas.findIndex(p => p.id == id);
     return index;
 }
 
@@ -43,7 +30,7 @@ router.get("/", (req, res) => {
 })
 
 router.get("/:id", (req, res) => {
-    res.json(listaPessoas[pegaId(req)]);
+    res.json(pessoas.listaPessoas[pegaId(req)]);
 })
 
 
@@ -63,23 +50,28 @@ router.put("/:id", (req,res) =>{
     const id = req.params.id;
     const pessoa = req.body;
     pessoa.id = id;
-    listaPessoas[pegaId(req)] = pessoa;
-    res.json(pessoa);
+    pessoas.listaPessoas[pegaId(req)] = pessoa;
+    res.json(pessoa);v
 })
 
 router.delete("/:id", (req,res) =>{
+    let num =0;
     const pessoa = req.params.id;
-    boletosRoute.buscarBoleto().forEach(b => {
+    boletos.listaBoletos.forEach(b => {
         if(b.id_pessoa == pessoa){
             res.json({
                 erro: "Não é possível excluir uma pessoa que possui boletos"
                 })
         }else{
-            res.json({
-                erro: "Pessoa excluída com sucesso"
-            });
+            num =1;
         }
     })
+    if(num == 1){
+        pessoas.listaPessoas.splice(pegaIdUser(req), 1);
+        res.json({
+            mensagem: "Pessoa excluída com sucesso!"
+        })
+    }
 })
 
 module.exports = {router, buscarPessoa, pegaId}
