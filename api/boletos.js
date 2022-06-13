@@ -20,6 +20,8 @@ function adicionaBoleto(req){
 
 function pegaIdBoleto(req){
     const id = req.params.id;
+    const isInteger = new RegExp('^[0-9]+$');	
+    id = isInteger.test(_id) ? parseInt(_id) : _id;
     const index = boletos.listaBoletos.findIndex(p => p.id_boleto == id);
     return index;
 }
@@ -84,7 +86,8 @@ router.post("/", (req, res) => {
 router.put("/:id", (req,res) =>{
     const id = req.params.id;
     const boleto = req.body;
-    boleto.id = id;
+    boleto.id_boleto = id;
+    boleto.nome_pessoa = pessoas.listaPessoas.filter(p => p.id == boleto.id_pessoa)[0].nome;
     boletos.listaBoletos[pegaIdBoleto(req)] = boleto;
     res.json(boleto);
 })
@@ -93,14 +96,16 @@ router.delete("/:id", (req,res) =>{
     let num =0;
     pessoas.listaPessoas.forEach(pessoa => {
         if(pessoa.id == boletos.listaBoletos.find(boleto => boleto.id_boleto == req.params.id).id_pessoa){
-            res.status(404).send("Impossível deletar, pessoa adicionada ao boleto!");
+            res.status(404).json({erro: 
+                "Impossível deletar, pessoa adicionada ao boleto!"
+            });
             num = 1;
         }
     })
     if(num != 1){
         boletos.listaBoletos.splice(pegaIdBoleto(req), 1);
         res.json({
-            mensagem: "Boleto excluído com sucesso!"
+            erro: "Boleto excluído com sucesso!"
         })
     }
 })

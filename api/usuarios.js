@@ -66,7 +66,7 @@ router.put("/:id", (req,res) =>{
     const id = req.params.id;
     const user = req.body;
     user.id = id;
-    usuarios.listaUsers[pegaId(req)] = user;
+    usuarios.listaUsers[pegaIdUser(req)] = user;
     res.json(user);
 })
 
@@ -85,7 +85,7 @@ router.delete("/:id", (req,res) =>{
     if(num != 1){
         usuarios.listaUsers.splice(pegaIdUser(req), 1);
         res.json({
-            mensagem: "Usuário excluído com sucesso!"
+            erro: "Usuário excluído com sucesso!"
         })
     }
 })

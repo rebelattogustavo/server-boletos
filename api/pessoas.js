@@ -14,7 +14,7 @@ function buscarPessoa(){
 function adicionaPessoa(req){
     console.log(req.body)
     const pessoa = req.body;
-    pessoa.id = pesoas.listaPessoas.length + 1;
+    pessoa.id = pessoas.listaPessoas.length + 1;
     pessoas.listaPessoas.push(pessoa);
     return pessoa;
 }
@@ -40,10 +40,10 @@ router.post("/", (req, res) => {
         if(req.body.cpf != undefined){
             res.json(adicionaPessoa(req));
         }else{
-            res.json("CPF não informado");
+            res.json({erro: "CPF não informado"});
         }
     }else{
-        res.json("Nome não informado");
+        res.json({erro: "Nome não informado"});
     }
 })
 
@@ -52,7 +52,7 @@ router.put("/:id", (req,res) =>{
     const pessoa = req.body;
     pessoa.id = id;
     pessoas.listaPessoas[pegaId(req)] = pessoa;
-    res.json(pessoa);v
+    res.json(pessoa);
 })
 
 router.delete("/:id", (req,res) =>{
@@ -60,14 +60,16 @@ router.delete("/:id", (req,res) =>{
     const pessoa = req.params.id;
     boletos.listaBoletos.forEach(b => {
         if(b.id_pessoa == pessoa){
-            res.status(400).send("Não é possível deletar! Pessoa está adicionada a um boleto.");
+            res.status(400).json({
+                erro: "Não é possível deletar! Pessoa está adicionada a um boleto."
+            });
             num =1;
         }
     })
     if(num != 1){
-        pessoas.listaPessoas.splice(pegaIdUser(req), 1);
+        pessoas.listaPessoas.splice(pegaId(req), 1);
         res.json({
-            mensagem: "Pessoa excluída com sucesso!"
+            erro: "Pessoa excluída com sucesso!"
         })
     }
 })
